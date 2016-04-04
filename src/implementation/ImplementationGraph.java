@@ -8,31 +8,15 @@ import graph.DirectedEdge;
 public class ImplementationGraph implements Graph
 {
 	private int[][] adjacentMatrix;
-	private Edge[] edgeList;
-	private Vertex[] vertexList;
 
-	public ImplementationGraph(int[][] array, Edge[] el, Vertex[] vl)
+	public ImplementationGraph(int nbVertex)
 	{
-		adjacentMatrix = array;
-		edgeList = el;
-		vertexList = vl;
-		for(int i = 0; i<vertexList.length; i++)
+		adjacentMatrix = new int[nbVertex][nbVertex];
+		for(int i = 0; i<nbVertex; i++)
 		{
-			Vertex[] tab1 = new Vertex[1];
-			tab1[0] = vertexList[i];
-			for(int j = 0; j<vertexList.length; j++)
+			for(int j = 0; j<nbVertex; j++)
 			{
-				for(int k = 0; k<edgeList.length; k++)
-				{
-
-					Vertex[] tab2 = new Vertex[1];
-					tab2[0] = vertexList[j];
-					if((edgeList[k].getEnds()[0].isTheSamePoint(tab1) || edgeList[k].getEnds()[0].isTheSamePoint(tab2))
-						&& (edgeList[k].getEnds()[1].isTheSamePoint(tab1) ||edgeList[k].getEnds()[1].isTheSamePoint(tab2)))
-						adjacentMatrix[i][j] = 1;
-					else
-						adjacentMatrix[i][j] = 0;
-				}
+				adjacentMatrix[i][j] = 0;
 			}
 		}
 	}
@@ -40,75 +24,57 @@ public class ImplementationGraph implements Graph
 	public Edge addEdge(Vertex sourceVertex, Vertex targetVertex)
 	{
 		Edge e = new DirectedEdge(sourceVertex, targetVertex);
-		Edge[] newEdgeArray = new Edge[edgeList.length + 1];
-
-	    //Copie  
-	    for (int i = 0; i < edgeList.length; i++){
-	        newEdgeArray[i] = edgeList[i];
-	    }
-		//Ajout de l'edge    
-	    newEdgeArray[newEdgeArray.length - 1] = e;
-	    edgeList = newEdgeArray;
-	    int rangVertexDepart = 0, rangVertexArrivee = 0;
-	    for(int i = 0; i<vertexList.length; i++)
-	    {
-	    	Vertex[] tab = new Vertex[1];
-	    	tab[0] = vertexList[i];
-	    	if(e.getEnds()[0].isTheSamePoint(tab))
-	    		rangVertexDepart = i;
-	    	if(e.getEnds()[1].isTheSamePoint(tab))
-	    		rangVertexArrivee = i;
-	    }
-	    	adjacentMatrix[rangVertexDepart][rangVertexArrivee] = 1;
+	    adjacentMatrix[(int)(sourceVertex.getCoordinates()[0]+sourceVertex.getCoordinates()[1])][(int)(targetVertex.getCoordinates()[0]+targetVertex.getCoordinates()[1])] = 1;
 	    return e;
 	}
 
 	public boolean addEdgeToGraph(Vertex sourcevertex, Vertex targetVertex, Edge edge)
 	{	
-		return true;
+		boolean b1 = addVertexToGraph(sourcevertex);
+		boolean b2 = addVertexToGraph(targetVertex);
+		Edge e = addEdge(sourcevertex, targetVertex);
+		return b1 && b2;
 	}
 
 	public boolean addVertexToGraph(Vertex vertex)
 	{
-		Vertex[] newVertexArray = new Vertex[vertexList.length + 1];
+		int[][] newAdjacentMatrix = new int[adjacentMatrix[0].length+1][adjacentMatrix[0].length+1];
+		for(int i = 0; i<adjacentMatrix.length; i++)
+		{
+			for(int j = 0; j<adjacentMatrix[i].length; j++)
+			{
+				newAdjacentMatrix[i][j] = adjacentMatrix[i][j];
+			}
+		}
 
-	    //Copie  
-	    for (int i = 0; i < vertexList.length; i++){
-	        newVertexArray[i] = vertexList[i];
-	    }
-		//Ajout de l'edge    
-	    newVertexArray[newVertexArray.length - 1] = vertex;
-	    vertexList = newVertexArray;
+		for(int i = 0; i<newAdjacentMatrix[0].length; i++)
+		{
+			newAdjacentMatrix[adjacentMatrix.length][i] = 0;
+			newAdjacentMatrix[i][adjacentMatrix.length] = 0;
+		}
+		adjacentMatrix = adjacentMatrix;
 	    return true;
 	}
 
 	public boolean containsEdge(Edge edge)
 	{
 		boolean contient = false;
-		for(Edge e : edgeList)
-		{
-			Vertex[] v = new Vertex[2];
-			v[0] = edge.getEnds()[0];
-			v[1] = edge.getEnds()[1];
-			if(e.getEnds()[0].isTheSamePoint(v) && e.getEnds()[1].isTheSamePoint(v))
-				contient = true;
-		}
 		return contient;
 	}
 
 	public boolean containsVertex(Vertex vertex)
 	{
-		return vertex.isTheSamePoint(vertexList);
+		return true;
 	}
 
 	public Edge[] getAllEdges()
 	{
-		return edgeList;
+		return null;
 	}
 
 	public Vertex[] getAllVertex()
 	{
-		return vertexList;
+		return null;
 	}
 
 	public Edge getEdge(Vertex sourceVertex, Vertex targetVertex)
