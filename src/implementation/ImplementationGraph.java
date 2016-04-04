@@ -16,6 +16,25 @@ public class ImplementationGraph implements Graph
 		adjacentMatrix = array;
 		edgeList = el;
 		vertexList = vl;
+		for(int i = 0; i<vertexList.length; i++)
+		{
+			Vertex[] tab1 = new Vertex[1];
+			tab1[0] = vertexList[i];
+			for(int j = 0; j<vertexList.length; j++)
+			{
+				for(int k = 0; k<edgeList.length; k++)
+				{
+
+					Vertex[] tab2 = new Vertex[1];
+					tab2[0] = vertexList[j];
+					if((edgeList[k].getEnds()[0].isTheSamePoint(tab1) || edgeList[k].getEnds()[0].isTheSamePoint(tab2))
+						&& (edgeList[k].getEnds()[1].isTheSamePoint(tab1) ||edgeList[k].getEnds()[1].isTheSamePoint(tab2)))
+						adjacentMatrix[i][j] = 1;
+					else
+						adjacentMatrix[i][j] = 0;
+				}
+			}
+		}
 	}
 
 	public Edge addEdge(Vertex sourceVertex, Vertex targetVertex)
