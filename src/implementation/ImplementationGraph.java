@@ -49,6 +49,17 @@ public class ImplementationGraph implements Graph
 		//Ajout de l'edge    
 	    newEdgeArray[newEdgeArray.length - 1] = e;
 	    edgeList = newEdgeArray;
+	    int rangVertexDepart = 0, rangVertexArrivee = 0;
+	    for(int i = 0; i<vertexList.length; i++)
+	    {
+	    	Vertex[] tab = new Vertex[1];
+	    	tab[0] = vertexList[i];
+	    	if(e.getEnds()[0].isTheSamePoint(tab))
+	    		rangVertexDepart = i;
+	    	if(e.getEnds()[1].isTheSamePoint(tab))
+	    		rangVertexArrivee = i;
+	    }
+	    	adjacentMatrix[rangVertexDepart][rangVertexArrivee] = 1;
 	    return e;
 	}
 
