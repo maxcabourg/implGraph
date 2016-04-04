@@ -54,12 +54,21 @@ public class ImplementationGraph implements Graph
 
 	public boolean containsEdge(Edge edge)
 	{
-		return true;
+		boolean contient = false;
+		for(Edge e : edgeList)
+		{
+			Vertex[] v = new Vertex[2];
+			v[0] = edge.getEnds()[0];
+			v[1] = edge.getEnds()[1];
+			if(e.getEnds()[0].isTheSamePoint(v) && e.getEnds()[1].isTheSamePoint(v))
+				contient = true;
+		}
+		return contient;
 	}
 
 	public boolean containsVertex(Vertex vertex)
 	{
-		return true;
+		return vertex.isTheSamePoint(vertexList);
 	}
 
 	public Edge[] getAllEdges()
