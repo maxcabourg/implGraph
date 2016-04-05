@@ -4,6 +4,7 @@ import graph.Graph;
 import graph.Edge;
 import graph.Vertex;
 import graph.DirectedEdge;
+import graph.UndirectedEdge;
 
 public class ImplementationGraph implements Graph
 {
@@ -24,7 +25,7 @@ public class ImplementationGraph implements Graph
 	public Edge addEdge(Vertex sourceVertex, Vertex targetVertex)
 	{
 		Edge e = new DirectedEdge(sourceVertex, targetVertex);
-	    adjacentMatrix[(int)(sourceVertex.getCoordinates()[0]+sourceVertex.getCoordinates()[1])][(int)(targetVertex.getCoordinates()[0]+targetVertex.getCoordinates()[1])] = 1;
+	    adjacentMatrix[Integer.parseInt(Double.toString(sourceVertex.getCoordinates()[0]))][Integer.parseInt(Double.toString(targetVertex.getCoordinates()[0]))] = 1;
 	    return e;
 	}
 
@@ -58,28 +59,56 @@ public class ImplementationGraph implements Graph
 
 	public boolean containsEdge(Edge edge)
 	{
-		boolean contient = false;
-		return contient;
+		return adjacentMatrix[Integer.parseInt(Double.toString(edge.getEnds()[0].getCoordinates()[0]))][Integer.parseInt(Double.toString(edge.getEnds()[1].getCoordinates()[0]))] == 1;
 	}
 
 	public boolean containsVertex(Vertex vertex)
 	{
-		return true;
+		return vertex.getCoordinates()[0] < adjacentMatrix.length;
 	}
 
 	public Edge[] getAllEdges()
 	{
-		return null;
+		Edge[] tabEdge = new Edge[100];
+		int nbEdges = 0;
+		for(int i = 0; i<adjacentMatrix.length; i++)
+		{
+			for(int j = 0; j<adjacentMatrix[i].length; j++)
+			{
+				if(adjacentMatrix[i][j] == 1)
+				{
+					double[] d1 = new double[1];
+					d1[0] = i;
+					double[] d2 = new double[1];
+					d2[0] = j;
+					Edge e = new UndirectedEdge(new Vertex(d1), new Vertex(d2));
+					tabEdge[nbEdges] = e;
+					nbEdges++;
+				}
+			}
+		}
+		return tabEdge;
 	}
 
 	public Vertex[] getAllVertex()
 	{
-		return null;
+		Vertex[] tabVertex = new Vertex[adjacentMatrix.length];
+		for(int i = 0; i<adjacentMatrix.length; i++)
+		{
+			double[] d1 = new double[1];
+			d1[0] = i;
+			Vertex v = new Vertex(d1);
+			tabVertex[i] = v;
+		}
+		return tabVertex;
 	}
 
 	public Edge getEdge(Vertex sourceVertex, Vertex targetVertex)
 	{
-		return null;
+		if(adjacentMatrix[Integer.parseInt(Double.toString(sourceVertex.getCoordinates()[0]))][Integer.parseInt(Double.toString(targetVertex.getCoordinates()[0]))] == 1)
+			return new UndirectedEdge(sourceVertex, targetVertex);
+		else 
+			return null;
 	}
 
 	public boolean isAdjacent(Edge A, Edge B)
@@ -89,7 +118,7 @@ public class ImplementationGraph implements Graph
 
 	public boolean isDirected(Edge edge)
 	{
-		return true;
+		return edge instanceof DirectedEdge;
 	}
 
 	public Edge[] isInEdges(Vertex vertex)
@@ -114,6 +143,28 @@ public class ImplementationGraph implements Graph
 
 	public boolean removeVertex(Vertex vertex)
 	{
+		if(Integer.parseInt(Double.toString(vertex.getCoordinates()[0])) >= adjacentMatrix.length)
+			return false;
+		else
+		{
+			int[][] newAdjacentMatrix = new int[adjacentMatrix.length-1][adjacentMatrix.length-1];
+			for(int i = 0; i<adjacentMatrix.length; i++)
+			{
+				for(int j = 0; j<adjacentMatrix[i].length; j++)
+				{
+					if(i>Integer.parseInt(Double.toString(vertex.getCoordinates()[0])) && j <= Integer.parseInt(Double.toString(vertex.getCoordinates()[0])))
+						newAdjacentMatrix[i-1][j] = adjacentMatrix[i][j]; //Il faut remonter d'une ligne en haut
+					else if(i<=Integer.parseInt(Double.toString(vertex.getCoordinates()[0])) && j > Integer.parseInt(Double.toString(vertex.getCoordinates()[0])))
+						newAdjacentMatrix[i][j-1] = adjacentMatrix[i][j]; //Il faut decaler d'un cran a gauche
+					else if(i > Integer.parseInt(Double.toString(vertex.getCoordinates()[0])) && j > Integer.parseInt(Double.toString(vertex.getCoordinates()[0])))
+						newAdjacentMatrix[i-1][j-1] = adjacentMatrix[i][j]; //Il faut faire les deux a la fois
+					else
+						newAdjacentMatrix[i][j] = adjacentMatrix[i][j];
+				}
+			}
+			adjacentMatrix = newAdjacentMatrix;
+		}
+		
 		return true;
 	}
 
